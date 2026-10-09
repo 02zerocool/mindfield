@@ -4,6 +4,7 @@ lancedb_*/
 ingest/ingest_queue/*
 ingest/ingest_done/*
 !ingest/ingest_queue/.gitkeep
+!ingest/ingest_queue/README.md
 
 # Models — large binaries
 models/

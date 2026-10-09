@@ -111,9 +111,10 @@ def print_next_steps():
      (See ingest/ingest_queue/README.md for what makes a good corpus)
 
   3. Start the stack:
-     docker-compose up -d                   # Docker
+     docker-compose up nomic-embed lean     # Docker (these two only — not 'up -d')
      OR
-     python lean/lean_api.py &              # lean API (requires embedding server running)
+     llama-server --model models/nomic-embed-text-v1.5.Q8_0.gguf --port 8082 --host 127.0.0.1 --embedding &
+     python lean/lean_api.py               # lean API
 
   4. Ingest your documents:
      python ingest/ingest_bulk_memory.py --dry-run
