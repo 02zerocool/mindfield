@@ -87,7 +87,7 @@ The full architectural rationale is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.
 
 ```bash
 # 1. Clone
-git clone https://github.com/yourname/mindfield
+git clone https://github.com/02zerocool/mindfield
 cd mindfield
 
 # 2. Setup — creates dirs, installs deps
