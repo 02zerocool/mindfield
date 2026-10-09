@@ -13,7 +13,9 @@ Endpoints:
 Config (env vars or .env):
   LANCE_DB_PATH   path to LanceDB directory         default: ./lancedb
   LEAN_PORT       port to listen on                 default: 8018
-  EMBED_URL       nomic-embed-text endpoint         default: http://127.0.0.1:8082
+  EMBED_URL       embedding server base URL         default: http://127.0.0.1:8082
+  EMBED_MODEL     model name sent to /v1/embeddings default: nomic-embed-text-v1.5
+  EMBED_DIM       embedding vector dimension        default: 768
 
 Start:
   python lean/lean_api.py
@@ -38,13 +40,26 @@ import lancedb
 import pyarrow as pa
 
 # ── Config ────────────────────────────────────────────────────────────────────
-LANCE_PATH = os.environ.get("LANCE_DB_PATH", str(Path(__file__).parent.parent / "lancedb"))
-PORT       = int(os.environ.get("LEAN_PORT", "8018"))
-EMBED_BASE = os.environ.get("EMBED_URL", "http://127.0.0.1:8082")
-EMBED_URL  = f"{EMBED_BASE}/v1/embeddings"
-EMBED_MODEL = "nomic-embed-text-v1.5"
-DIM        = 768
-TABLE_NAME = "memory"
+LANCE_PATH  = os.environ.get("LANCE_DB_PATH", str(Path(__file__).parent.parent / "lancedb"))
+PORT        = int(os.environ.get("LEAN_PORT", "8018"))
+EMBED_BASE  = os.environ.get("EMBED_URL", "http://127.0.0.1:8082")
+EMBED_URL   = f"{EMBED_BASE}/v1/embeddings"
+EMBED_MODEL = os.environ.get("EMBED_MODEL", "nomic-embed-text-v1.5")
+DIM         = int(os.environ.get("EMBED_DIM", "768"))
+TABLE_NAME  = "memory"
+
+# ── Embedding model reference ──────────────────────────────────────────────────
+# Default: nomic-embed-text-v1.5 — 768-dim, runs on CPU via llama-server
+#
+# Other compatible models (adjust EMBED_DIM to match):
+#   mxbai-embed-large-v1     1024-dim   higher accuracy, more RAM
+#   all-MiniLM-L6-v2          384-dim   fastest, lowest RAM, good for short text
+#   snowflake-arctic-embed-m  768-dim   strong retrieval accuracy
+#   bge-large-en-v1.5        1024-dim   strong English retrieval
+#
+# Any OpenAI-compatible /v1/embeddings endpoint works — local or remote.
+# Change EMBED_MODEL and EMBED_DIM to match your chosen model.
+# WARNING: changing DIM on an existing table requires a full re-ingest.
 
 # ── LanceDB setup ─────────────────────────────────────────────────────────────
 _db    = lancedb.connect(LANCE_PATH)
